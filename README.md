@@ -1,79 +1,133 @@
-API Library
+ดูเพิ่มเติมที่ https://www.nowvlog.com/basic/index.html
 
-การเลือกตารางข้อมูล และนำข้อมูลมาแสดง	
-- สร้างตัวแปรรับค่า 1 ตัวเพื่อรับค่า
+เชื่อมต่อฐานข้อมูล เปิดไฟล์ /config/connect.php
 
-ชุดคำสั่ง
+# USER CONNECT #
+ 
+define(db_host,'localhost');
+define(db_user,'root');
+define(db_pass,'password');
+define(db_name,'database');
+เชื่อมโยงหน้าเพจต่างๆ ของเว็บไซต์ เปิดไฟล์ index.php 
 
-$db_query->getData($table,$select,$where,$order,$limit);
+รายละเอียดโค้ด
+$page_go คือ ชื่อเงื่อนไข ที่ต้องการอ้างถึง
+include(view.'....ชื่อไฟล์ที่ต้องการให้แสดง...'); 
 
-อธิบาย
+ตัวอย่างโค้ด
 
-$table คือ ชื่อตาราง
-$select คือ ข้อมูลที่ต้องการ หากต้องการจข้อมูลทั้งหมดปล่อยว่าง 
-$where คือ เงื่อนไขในการเรียกข้อมูล
-$order คือ รูปแบบการเรียงลำดับ
-$limit คือ จำนวนข้อมูลที่ต้องการจำกัด
-
-ตัวอย่างการใช้งาน
-
-$studen_array = $db_query->getData("student"," student_name ","student_id='2'","","");
-foreach($studen_array as $key => $row_student){
-        echo $row_student['student_name'];
+if($page_go=='index'){
+    include(view.'index/main.php');
 }
 
-การเพิ่มข้อมูล	- สร้างชุดอาเรย์ 1 ชุด
+หน้าที่ต่างๆ ของแต่ละโฟลเดอร์
 
-ชุดคำสั่ง
-
-$db_query->insert($table, $data=array());
-
-อธิบาย
-
-$table คือ ชื่อตาราง
-$data คือ ค่าที่ต้องการเพิ่มสู่ฐานข้อมูล
-
-ตัวอย่างการใช้งาน
-
-$data=array();
-$data['student_name'] = "One";
-$data['student_age'] = "14"; 
-$data['student_province'] = "Bangkok"; 
-$db_query->insert("student", $data);
-
-การอัพเดทข้อมูล	
-- สร้างชุดอาเรย์ 1 ชุด
-
-ชุดคำสั่ง
-
-$db_query->($table, $data=array(), $update_id_field , $update_id_value)
-
-อธิบาย
-
-$table คือ ชื่อตาราง
-$data คือ ค่าที่ต้องการอัพเดทข้อมูล
-$update_id_field คือ ชื่อแถวที่ต้องการอัพเดท
-$update_id_value คือ ค่า/ลำดับ แถวที่ต้องการอัพเดท
-
-ตัวอย่างการใช้งาน
-
-$data=array();
-$data['student_name'] = "Two";
-$data['student_age'] = "15"; 
-$data['student_province'] = "Nontaburi"; 
-$db_query->update("student", $data, "student_id","2");
+โฟลเดอร์ view ทำหน้าที่ในการเก็บไฟล์สำหรับแสดงผลหน้าเพจเว็บไซต์
+โฟลเดอร์ model ทำหน้าที่เก็บส่วนที่เชื่อมกับฐานข้อมูลที่จะนำมาใช้ร่วมกับ view
+โฟลเดอร์ controller ทำหน้าที่เก็บไฟล์ประมวลผล ที่ได้จากการส่งข้อมูลจากฟอร์ม หรือการประมวลผลอื่นๆ ใช้ร่วมกับ Javascript และแสดงผลในส่วน view
 
 
-การลบข้อมูล	ชุดคำสั่ง
+การเพิ่มข้อมูล
+ตัวอย่างโค้ด
 
-$db_query->delete($table, $delete_id_field , $delete_id_value)
+$table = "member";
+$data = array();
+$data['member_name'] = "Nowvlog";
+$insertStatus = DB::insert($table,$data);
+การแก้ไข/อัพเดทข้อมูล
+ตัวอย่างโค้ด
 
-อธิบาย
+$table = "member";
+$update_field = "member_id";
+$update_value = "1";
+$data = array();
+$data['member_name'] = "Thinnakrit";
+$updateStatus = DB::update($table,$data,$update_field,$update_value);
+การลบข้อมูล
+ตัวอย่างโค้ด
 
-$table คือ ชื่อตาราง
-$delete_id_field คือ ชื่อแถวที่ต้องการลบ
-$delete_id_value คือ ค่า/ลำดับ แถวที่ต้องการลบ
+$table = "member";
+$delete_field = "member_id";
+$delete_value = "1";
+$deleteStatus = DB::delete($table,$delete_field,$delete_value);
+เรียกข้อมูลตามเงื่อนไข
+ตัวอย่างโค้ด
 
-ตัวอย่างการใช้งาน
+$table = "member";
+$select = " * ";
+$where = "member_name='%n%'";
+$order = "ORDER BY member_id DESC";
+$limit = "3";
+$result = DB::getData($table,$select,$where,$order,$limit);
 
-$db_query->delete("student","student_id","2");
+การแสดงข้อมูลหลังจากเรียกใช้
+
+foreach($result as $key => $row){
+    echo $row['member_name']."<br>";
+}
+เรียกข้อมูล 1 ค่า
+ตัวอย่างโค้ด
+
+$table = "member";
+$select = "member_name";
+$where = "member_id='1'";
+$member_name = DB::getValue($table,$select,$where);
+ 
+echo $member_name;
+IP ของผู้ใช้งาน
+ตัวอย่างโค้ด
+
+$IP = Tools::getIP();
+ 
+echo $IP;
+สุ่มตัวเลข 0-9
+ตัวอย่างโค้ด
+
+$length = '5'; //จำนวน
+$value = Tools::genNumber($length);
+ 
+echo $value;
+สุ่มตัวอักษร a-Z
+ตัวอย่างโค้ด
+
+$length = '5'; //จำนวน
+$value = Tools::genText($length);
+ 
+echo $value;
+สุ่มตัวอักษรและตัวเลข
+ตัวอย่างโค้ด
+
+$length = '5'; //จำนวน
+$value = Tools::genTextNumber($length);
+ 
+echo $value;
+เรียกที่อยู่เว็บไซต์ปัจจุบัน
+ตัวอย่างโค้ด
+
+$value = Tools::getWebUrl();
+ 
+echo $value;
+ตรวจสอบ Email
+ตัวอย่างโค้ด
+
+$email = "example@gmail.com";
+$result = Tools::Validate::email($email);
+//Result : true or false
+ตรวจสอบตัวเลข
+ตัวอย่างโค้ด
+
+$number = "19";
+$result = Tools::Validate::number($number);
+//Result : true or false
+ตรวจสอบที่อยู่เว็บไซต์
+ตัวอย่างโค้ด
+
+$url = "http://www.nowvlog.com";
+$result = Tools::Validate::url($url);
+//Result : true or false
+ตรวจสอบนามสกุลไฟล์ภาพ
+ตัวอย่างโค้ด
+
+$pictype = "png";
+$result = Tools::Validate::pictype($pictype);
+//Result : true or false
