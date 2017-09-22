@@ -1,5 +1,3 @@
-ดูเพิ่มเติมที่ https://www.nowvlog.com/basic/index.html
-
 เชื่อมต่อฐานข้อมูล เปิดไฟล์ /config/connect.php
 
 # USER CONNECT #
